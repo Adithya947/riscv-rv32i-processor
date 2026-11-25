@@ -1,6 +1,5 @@
 module riscv_top (
-    input logic clk,
-    input logic reset
+    input logic clk, reset
 );
     // ---------- wires ----------
     logic [31:0] pc, next_pc, pc_plus4, pc_branch;
@@ -28,15 +27,13 @@ module riscv_top (
                            .is_rtype(is_rtype), .ALUControl(ALUControl));
 
     // ---------- register file, immediate, ALU ----------
-    regfile u_rf (.clk(clk), .reset(reset), .we(RegWrite),
-                  .rs1(instr[19:15]), .rs2(instr[24:20]), .rd(instr[11:7]),
-                  .wd(wd), .rd1(rd1), .rd2(rd2));
+    regfile u_rf (.clk(clk), .we(RegWrite), .rs1(instr[19:15]), .rs2(instr[24:20]),
+                  .rd(instr[11:7]), .wd(wd), .rd1(rd1), .rd2(rd2));
     sign_extend u_imm (.instr(instr), .imm_ext(imm_ext));
     assign B = ALUSrc ? imm_ext : rd2;
     alu u_alu (.A(rd1), .B(B), .ALUControl(ALUControl), .result(result), .Zero(Zero));
 
     // ---------- data memory and write-back ----------
-    dmem u_dmem (.clk(clk), .MemWrite(MemWrite), .addr(result),
-                 .write_data(rd2), .read_data(read_data));
+    dmem u_dmem (.clk(clk), .MemWrite(MemWrite), .addr(result), .write_data(rd2), .read_data(read_data));
     assign wd = MemToReg ? read_data : result;
 endmodule
