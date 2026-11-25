@@ -1,35 +1,18 @@
 module alu (
-    input  logic [31:0] a,
-    input  logic [31:0] b,
-    input  logic [2:0]  alu_control,
-
+    input  logic [31:0] A, B,
+    input  logic [2:0]  ALUControl,
     output logic [31:0] result,
-    output logic        zero
+    output logic        Zero
 );
-
     always_comb begin
-
-        case (alu_control)
-
-            3'b000: result = a + b;  // ADD
-            3'b001: result = a - b;  // SUB
-            3'b010: result = a & b;  // AND
-            3'b011: result = a | b;  // OR
-            3'b100: result = a ^ b;  // XOR
-
-            3'b101: begin             // SLT
-                if ($signed(a) < $signed(b))
-                    result = 32'd1;
-                else
-                    result = 32'd0;
-            end
-
-            default: result = 32'd0;
-
+        case (ALUControl)
+            3'b000:  result = A + B;     // add
+            3'b001:  result = A - B;     // subtract
+            3'b010:  result = A & B;     // and
+            3'b011:  result = A | B;     // or
+            default: result = 32'b0;
         endcase
-
     end
 
-    assign zero = (result == 32'd0);
-
+    always_comb Zero = (result == 32'b0);
 endmodule
